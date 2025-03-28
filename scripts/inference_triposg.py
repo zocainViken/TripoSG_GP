@@ -53,7 +53,7 @@ if __name__ == "__main__":
     triposg_weights_dir = "pretrained_weights/TripoSG"
     rmbg_weights_dir = "pretrained_weights/RMBG-1.4"
     snapshot_download(repo_id="VAST-AI/TripoSG", local_dir=triposg_weights_dir)
-    snapshot_download(repo_id="briai/RMBG-1.4", local_dir=rmbg_weights_dir)
+    snapshot_download(repo_id="briaai/RMBG-1.4", local_dir=rmbg_weights_dir)
 
     # init rmbg model for background removal
     rmbg_net = BriaRMBG.from_pretrained(rmbg_weights_dir).to(device)
