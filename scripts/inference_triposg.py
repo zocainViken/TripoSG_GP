@@ -1,5 +1,6 @@
 import argparse
 import os
+import sys
 from glob import glob
 from typing import Any, Union
 
@@ -8,6 +9,8 @@ import torch
 import trimesh
 from huggingface_hub import snapshot_download
 from PIL import Image
+
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from triposg.pipelines.pipeline_triposg import TripoSGPipeline
 from image_process import prepare_image
