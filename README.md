@@ -73,8 +73,7 @@ The required model weights will be automatically downloaded:
 
 ## 📝 Tips
 
-- If you want to use the full VAE module (including the encoder part), you need to uncomment the Line-15 in triposg.models.autoencoders.autoencoder_kl_triposg.py and install torch-cluster.
-
+- If you want to use the full VAE module (including the encoder part), you need to uncomment the Line-15 in `triposg/models/autoencoders/autoencoder_kl_triposg.py` and install `torch-cluster`.
 
 ## 🤝 Community & Support
 
