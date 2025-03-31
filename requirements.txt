@@ -1,7 +1,6 @@
 diffusers
 transformers
 einops
-torch-cluster
 huggingface_hub
 opencv-python
 trimesh
