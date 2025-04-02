@@ -2,7 +2,6 @@ import argparse
 import numpy as np
 import torch
 import trimesh
-from skimage import measure
 
 from triposg.inference_utils import hierarchical_extract_geometry
 from triposg.models.autoencoders import TripoSGVAEModel
