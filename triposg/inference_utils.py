@@ -466,7 +466,7 @@ def flash_extract_geometry(
         dmc = DiffDMC(dtype=torch.float32).to(grid_logits.device)
         sdf = -grid_logits / octree_resolution
         sdf = sdf.to(torch.float32).contiguous()
-        vertices, faces = dmc(sdf, deform=None, return_quads=False, normalize=True)
+        vertices, faces = dmc(sdf, deform=None, return_quads=False, normalize=False)
         vertices = vertices.detach().cpu().numpy()
         faces = faces.detach().cpu().numpy()[:, ::-1]        
         vertices = vertices / (2 ** octree_depth) * bbox_size + bbox_min
