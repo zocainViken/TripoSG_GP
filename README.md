@@ -103,6 +103,7 @@ We would like to thank the following open-source projects and research works tha
 - [RMBG-1.4](https://huggingface.co/briaai/RMBG-1.4) for background removal
 - [🤗 Diffusers](https://github.com/huggingface/diffusers) for their excellent diffusion model framework
 - [HunyuanDiT](https://github.com/Tencent/HunyuanDiT) for DiT
+- [FlashVDM](https://github.com/Tencent/FlashVDM) for their lightning vecset decoder
 - [3DShape2VecSet](https://github.com/1zb/3DShape2VecSet) for 3D shape representation
 
 We are grateful to the broader research community for their open exploration and contributions to the field of 3D generation.

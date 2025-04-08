@@ -10,3 +10,4 @@ numpy==1.22.3
 peft
 jaxtyping
 typeguard
+diso

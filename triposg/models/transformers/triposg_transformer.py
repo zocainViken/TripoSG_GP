@@ -251,6 +251,13 @@ class DiTBlock(nn.Module):
         self._chunk_size = None
         self._chunk_dim = 0
 
+    def set_topk(self, topk):
+        self.flash_processor.topk = topk
+
+    def set_flash_processor(self, flash_processor):
+        self.flash_processor = flash_processor
+        self.attn2.processor = self.flash_processor
+
     # Copied from diffusers.models.attention.BasicTransformerBlock.set_chunk_feed_forward
     def set_chunk_feed_forward(self, chunk_size: Optional[int], dim: int = 0):
         # Sets chunk feed-forward
