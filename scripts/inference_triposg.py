@@ -46,7 +46,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--image-input", type=str, required=True)
-    parser.add_argument("--output-dir", type=str, default="./")
+    parser.add_argument("--output-path", type=str, default="./output.glb")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--num-inference-steps", type=int, default=50)
     parser.add_argument("--guidance-scale", type=float, default=7.0)
@@ -73,4 +73,5 @@ if __name__ == "__main__":
         seed=args.seed,
         num_inference_steps=args.num_inference_steps,
         guidance_scale=args.guidance_scale,
-    ).export(os.path.join(args.output_dir, "output.glb"))
+    ).export(args.output_path)
+    print(f"Mesh saved to {args.output_path}")

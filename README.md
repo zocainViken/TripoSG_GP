@@ -4,8 +4,9 @@
 
 [![Project Page](https://img.shields.io/badge/🏠-Project%20Page-blue.svg)](https://yg256li.github.io/TripoSG-Page/)
 [![Paper](https://img.shields.io/badge/📑-Paper-green.svg)](https://arxiv.org/abs/2502.06608)
-[![Model](https://img.shields.io/badge/🤗-Model-yellow.svg)](https://huggingface.co/VAST-AI/TripoSG)
-[![Online Demo](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/VAST-AI/TripoSG)
+[![Model](https://img.shields.io/badge/%F0%9F%A4%97%20Model-TripoSG-yellow.svg)](https://huggingface.co/VAST-AI/TripoSG)
+[![Online Demo](https://img.shields.io/badge/%F0%9F%A4%97%20HF%20Space-TripoSG-blue)](https://huggingface.co/spaces/VAST-AI/TripoSG)
+[![Online Demo](https://img.shields.io/badge/%F0%9F%A4%97%20HF%20Space-TripoSG%20scribble-blue)](https://huggingface.co/spaces/VAST-AI/TripoSG-scribble)
 
 **By [Tripo](https://www.tripo3d.ai)**
 
@@ -31,6 +32,7 @@ TripoSG is an advanced high-fidelity, high-quality and high-generalizability ima
 
 ## 🔥 Updates
 
+* [2025-04] Release TripoSG-scribble, a CFG-distilled, 512 token model for fast shape prototyping from scribble+prompt! Try the online demo [here](https://huggingface.co/spaces/VAST-AI/TripoSG-scribble).
 * [2025-03] Release of TripoSG 1.5B parameter rectified flow model and VAE trained on 2048 latent tokens, along with inference code and interactive demo
 
 ## 🔨 Installation
@@ -60,11 +62,17 @@ pip install -r requirements.txt
 
 Generate a 3D mesh from an image:
 ```bash
-python -m scripts.inference_triposg --image-input assets/example_data/hjswed.png
+python -m scripts.inference_triposg --image-input assets/example_data/hjswed.png --output-path ./output.glb
+```
+
+or from scribble+prompt:
+```bash
+ python -m scripts.inference_triposg_scribble --image-input assets/example_scribble_data/cat_with_wings.png --prompt "a cat with wings" --scribble-conf 0.3 --output-path output.glb
 ```
 
 The required model weights will be automatically downloaded:
-- TripoSG model from [VAST-AI/TripoSG](https://huggingface.co/VAST-AI/TripoSG) → `pretrained_weights/TripoSG`
+- TripoSG (image condition) model from [VAST-AI/TripoSG](https://huggingface.co/VAST-AI/TripoSG) → `pretrained_weights/TripoSG`
+= TripoSG-scribble (scribble+prompt condition) model from [VAST-AI/TripoSG-scribble](https://huggingface.co/VAST-AI/TripoSG-scribble) → `pretrained_weights/TripoSG-scribble`
 - RMBG model from [briaai/RMBG-1.4](https://huggingface.co/briaai/RMBG-1.4) → `pretrained_weights/RMBG-1.4`
 
 ## 💻 System Requirements
@@ -80,8 +88,7 @@ python -m scripts.inference_vae --surface-input assets/example_data_point/surfac
 
 ## 🤝 Community & Support
 
-- **Interactive Demo**: Try TripoSG on [Hugging Face Spaces](https://huggingface.co/spaces/VAST-AI/TripoSG)
-- **Issues & Discussions**: Use GitHub Issues for bug reports and feature requests
+- **Issues & Discussions**: Use GitHub Issues for bug reports and feature requests.
 - **Contributing**: We welcome contributions!
 
 ## 📚 Citation
