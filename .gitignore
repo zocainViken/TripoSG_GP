@@ -1,3 +1,6 @@
+*\__pycache__
+*\pretrained_weights
+*.glb
 
 
 # Created by https://www.toptal.com/developers/gitignore/api/python

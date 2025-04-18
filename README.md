@@ -70,6 +70,12 @@ or from scribble+prompt:
  python -m scripts.inference_triposg_scribble --image-input assets/example_scribble_data/cat_with_wings.png --prompt "a cat with wings" --scribble-conf 0.3 --output-path output.glb
 ```
 
+Limiting the number of faces and giving a custom name to the output:
+```bash
+python -m scripts.inference_triposg --image-input assets/example_data/hjswed.png --faces 5000 --name "Lowpoly Dino"
+```
+
+
 The required model weights will be automatically downloaded:
 - TripoSG (image condition) model from [VAST-AI/TripoSG](https://huggingface.co/VAST-AI/TripoSG) → `pretrained_weights/TripoSG`
 = TripoSG-scribble (scribble+prompt condition) model from [VAST-AI/TripoSG-scribble](https://huggingface.co/VAST-AI/TripoSG-scribble) → `pretrained_weights/TripoSG-scribble`
