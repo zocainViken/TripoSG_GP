@@ -65,16 +65,15 @@ Generate a 3D mesh from an image:
 python -m scripts.inference_triposg --image-input assets/example_data/hjswed.png --output-path ./output.glb
 ```
 
+Limiting the number of faces:
+```bash
+python -m scripts.inference_triposg --image-input assets/example_data/hjswed.png --faces 5000 --output-path ./output.glb
+```
+
 or from scribble+prompt:
 ```bash
  python -m scripts.inference_triposg_scribble --image-input assets/example_scribble_data/cat_with_wings.png --prompt "a cat with wings" --scribble-conf 0.3 --output-path output.glb
 ```
-
-Limiting the number of faces and giving a custom name to the output:
-```bash
-python -m scripts.inference_triposg --image-input assets/example_data/hjswed.png --faces 5000 --name "Lowpoly Dino"
-```
-
 
 The required model weights will be automatically downloaded:
 - TripoSG (image condition) model from [VAST-AI/TripoSG](https://huggingface.co/VAST-AI/TripoSG) → `pretrained_weights/TripoSG`
