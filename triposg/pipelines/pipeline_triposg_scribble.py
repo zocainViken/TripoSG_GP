@@ -9,11 +9,13 @@ import torch
 import trimesh
 from diffusers.image_processor import PipelineImageInput
 from diffusers.pipelines.pipeline_utils import DiffusionPipeline
-from diffusers.schedulers import FlowMatchEulerDiscreteScheduler  
+from diffusers.schedulers import FlowMatchEulerDiscreteScheduler  # not sure
 from diffusers.utils import logging
 from diffusers.utils.torch_utils import randn_tensor
 from transformers import (
     BitImageProcessor,
+    CLIPTokenizer,
+    CLIPTextModelWithProjection,
     Dinov2Model,
 )
 from ..inference_utils import hierarchical_extract_geometry, flash_extract_geometry
@@ -92,16 +94,18 @@ def retrieve_timesteps(
     return timesteps, num_inference_steps
 
 
-class TripoSGPipeline(DiffusionPipeline, TransformerDiffusionMixin):
+class TripoSGScribblePipeline(DiffusionPipeline, TransformerDiffusionMixin):
     """
-    Pipeline for image-to-3D generation.        
+    Pipeline for (scribble and text)-to-3D generation.   
     """
 
     def __init__(
-        self,   
+        self,
         vae: TripoSGVAEModel,
         transformer: TripoSGDiTModel,
         scheduler: FlowMatchEulerDiscreteScheduler,
+        tokenizer: CLIPTokenizer,
+        text_encoder: CLIPTextModelWithProjection,
         image_encoder_dinov2: Dinov2Model,
         feature_extractor_dinov2: BitImageProcessor,
     ):
@@ -111,8 +115,10 @@ class TripoSGPipeline(DiffusionPipeline, TransformerDiffusionMixin):
             vae=vae,
             transformer=transformer,
             scheduler=scheduler,
+            tokenizer=tokenizer,
+            text_encoder=text_encoder,
             image_encoder_dinov2=image_encoder_dinov2,
-            feature_extractor_dinov2=feature_extractor_dinov2,
+            feature_extractor_dinov2=feature_extractor_dinov2
         )
 
     @property
@@ -130,12 +136,17 @@ class TripoSGPipeline(DiffusionPipeline, TransformerDiffusionMixin):
     @property
     def attention_kwargs(self):
         return self._attention_kwargs
+    
+    def encode_text(self, prompt, device, num_shapes_per_prompt):
+        input_ids = self.tokenizer(
+            [prompt], max_length=self.tokenizer.model_max_length, padding="max_length", truncation=True, return_tensors="pt"
+        )['input_ids'].to(device)
+        text_embeds = self.text_encoder(input_ids).last_hidden_state
+        text_embeds = text_embeds.repeat_interleave(num_shapes_per_prompt, dim=0)
+        uncond_text_embeds = torch.zeros_like(text_embeds)
+        return text_embeds, uncond_text_embeds
 
-    @property
-    def decode_progressive(self):
-        return self._decode_progressive
-
-    def encode_image(self, image, device, num_images_per_prompt):
+    def encode_image(self, image, device, num_shapes_per_prompt):
         dtype = next(self.image_encoder_dinov2.parameters()).dtype
 
         if not isinstance(image, torch.Tensor):
@@ -143,7 +154,7 @@ class TripoSGPipeline(DiffusionPipeline, TransformerDiffusionMixin):
 
         image = image.to(device=device, dtype=dtype)
         image_embeds = self.image_encoder_dinov2(image).last_hidden_state
-        image_embeds = image_embeds.repeat_interleave(num_images_per_prompt, dim=0)
+        image_embeds = image_embeds.repeat_interleave(num_shapes_per_prompt, dim=0)
         uncond_image_embeds = torch.zeros_like(image_embeds)
 
         return image_embeds, uncond_image_embeds
@@ -160,7 +171,7 @@ class TripoSGPipeline(DiffusionPipeline, TransformerDiffusionMixin):
     ):
         if latents is not None:
             return latents.to(device=device, dtype=dtype)
-
+        
         shape = (batch_size, num_tokens, num_channels_latents)
 
         if isinstance(generator, list) and len(generator) != batch_size:
@@ -173,13 +184,13 @@ class TripoSGPipeline(DiffusionPipeline, TransformerDiffusionMixin):
 
         return latents
 
-
     @torch.no_grad()
     def __call__(
         self,
         image: PipelineImageInput,
+        prompt: str,
+        num_tokens: int = 512,
         num_inference_steps: int = 50,
-        num_tokens: int = 2048,
         timesteps: List[int] = None,
         guidance_scale: float = 7.0,
         num_shapes_per_prompt: int = 1,
@@ -195,7 +206,6 @@ class TripoSGPipeline(DiffusionPipeline, TransformerDiffusionMixin):
         use_flash_decoder: bool = True,
         return_dict: bool = True,
     ):
-        # 1. Define call parameters
         self._guidance_scale = guidance_scale
         self._attention_kwargs = attention_kwargs
 
@@ -212,11 +222,16 @@ class TripoSGPipeline(DiffusionPipeline, TransformerDiffusionMixin):
         device = self._execution_device
 
         # 3. Encode condition
-        image_embeds, negative_image_embeds = self.encode_image(
-            image, device, num_shapes_per_prompt
+        text_embeds, negative_text_embeds = self.encode_text(
+            prompt, device, num_shapes_per_prompt
         )
 
+        image_embeds, negative_image_embeds = self.encode_image(
+            image, device, num_shapes_per_prompt
+        )        
+
         if self.do_classifier_free_guidance:
+            text_embeds = torch.cat([negative_text_embeds, text_embeds], dim=0)
             image_embeds = torch.cat([negative_image_embeds, image_embeds], dim=0)
 
         # 4. Prepare timesteps
@@ -255,8 +270,9 @@ class TripoSGPipeline(DiffusionPipeline, TransformerDiffusionMixin):
 
                 noise_pred = self.transformer(
                     latent_model_input,
-                    timestep,
-                    encoder_hidden_states=image_embeds,
+                    timestep.to(dtype=latents.dtype),
+                    encoder_hidden_states=text_embeds,
+                    encoder_hidden_states_2=image_embeds,
                     attention_kwargs=attention_kwargs,
                     return_dict=False,
                 )[0]
@@ -293,7 +309,6 @@ class TripoSGPipeline(DiffusionPipeline, TransformerDiffusionMixin):
                 ):
                     progress_bar.update()
 
-
         # 7. decoder mesh
         if not use_flash_decoder:
             geometric_func = lambda x: self.vae.decode(latents, sampled_points=x).sample
@@ -321,4 +336,3 @@ class TripoSGPipeline(DiffusionPipeline, TransformerDiffusionMixin):
             return (output, meshes)
 
         return TripoSGPipelineOutput(samples=output, meshes=meshes)
-
