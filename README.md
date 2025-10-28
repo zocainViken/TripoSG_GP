@@ -71,6 +71,12 @@ Limiting the number of faces:
 python -m scripts.inference_triposg_mmgp --image-input assets/example_data/hjswed.png --faces 5000 --output-path ./output.glb
 ```
 
+Gradio app:
+```bash
+python gradio_inference_mmgp_fr.py
+python gradio_inference_mmgp.py
+```
+
 or from scribble+prompt: *** NOT TESTED ***
 ```bash
  python -m scripts.inference_triposg_scribble --image-input assets/example_scribble_data/cat_with_wings.png --prompt "a cat with wings" --scribble-conf 0.3 --output-path output.glb
