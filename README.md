@@ -52,7 +52,8 @@ conda activate tripoSG
 Install dependencies:
 ```bash
 # pytorch (select correct CUDA version)
-pip install torch torchvision --index-url https://download.pytorch.org/whl/{your-cuda-version}
+# pytorch < 2.9.0
+pip install torch==2.8.0 torchvision --index-url https://download.pytorch.org/whl/test/{your-cuda-version}
 
 # other dependencies
 pip install -r requirements.txt
@@ -62,15 +63,15 @@ pip install -r requirements.txt
 
 Generate a 3D mesh from an image:
 ```bash
-python -m scripts.inference_triposg --image-input assets/example_data/hjswed.png --output-path ./output.glb
+python -m scripts.inference_triposg_mmgp --image-input assets/example_data/hjswed.png --output-path ./output.glb
 ```
 
 Limiting the number of faces:
 ```bash
-python -m scripts.inference_triposg --image-input assets/example_data/hjswed.png --faces 5000 --output-path ./output.glb
+python -m scripts.inference_triposg_mmgp --image-input assets/example_data/hjswed.png --faces 5000 --output-path ./output.glb
 ```
 
-or from scribble+prompt:
+or from scribble+prompt: *** NOT TESTED ***
 ```bash
  python -m scripts.inference_triposg_scribble --image-input assets/example_scribble_data/cat_with_wings.png --prompt "a cat with wings" --scribble-conf 0.3 --output-path output.glb
 ```
@@ -82,10 +83,10 @@ The required model weights will be automatically downloaded:
 
 ## 💻 System Requirements
 
-- CUDA-enabled GPU with at least 8GB VRAM
+- CUDA-enabled GPU with at least 4GB VRAM
 
 ## 📝 Tips
-
+*** NOT TESTED ***
 - If you want to use the full VAE module (including the encoder part), you need to uncomment the Line-15 in `triposg/models/autoencoders/autoencoder_kl_triposg.py` and install `torch-cluster`. and run:
 ```
 python -m scripts.inference_vae --surface-input assets/example_data_point/surface_point_demo.npy
@@ -106,6 +107,11 @@ python -m scripts.inference_vae --surface-input assets/example_data_point/surfac
   year={2025}
 }
 ```
+## Other GPU Poor Applications
+
+- **[Wan2GP](https://github.com/deepbeepmeep/Wan2GP )** - Another great 3D Image to Video and Text to Video generator. It can run on very low config as one its models is only 1.5 B parameters
+
+- **[Hunyuan3D-2GP](https://github.com/deepbeepmeep/Hunyuan3D-2GP)** - Image to 3D and text to 3D tool
 
 ## ⭐ Acknowledgements
 
@@ -117,5 +123,6 @@ We would like to thank the following open-source projects and research works tha
 - [HunyuanDiT](https://github.com/Tencent/HunyuanDiT) for DiT
 - [FlashVDM](https://github.com/Tencent/FlashVDM) for their lightning vecset decoder
 - [3DShape2VecSet](https://github.com/1zb/3DShape2VecSet) for 3D shape representation
+- [MMGP](https://github.com/deepbeepmeep/mmgp) for poor GPU optmisation
 
 We are grateful to the broader research community for their open exploration and contributions to the field of 3D generation.
