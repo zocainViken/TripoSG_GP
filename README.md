@@ -123,6 +123,6 @@ We would like to thank the following open-source projects and research works tha
 - [HunyuanDiT](https://github.com/Tencent/HunyuanDiT) for DiT
 - [FlashVDM](https://github.com/Tencent/FlashVDM) for their lightning vecset decoder
 - [3DShape2VecSet](https://github.com/1zb/3DShape2VecSet) for 3D shape representation
-- [MMGP](https://github.com/deepbeepmeep/mmgp) for poor GPU optmisation
+- [MMGP](https://github.com/deepbeepmeep/mmgp) for poor GPU optimisation
 
 We are grateful to the broader research community for their open exploration and contributions to the field of 3D generation.
