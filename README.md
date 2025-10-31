@@ -89,8 +89,8 @@ The required model weights will be automatically downloaded:
 
 ## 💻 System Requirements
 
-- CUDA-enabled GPU with at least 4GB VRAM for 3D model generation
-- CUDA-enabled GPU with at least 8GB VRAM for texturing model generation
+- CUDA-enabled GPU with at least 6GB VRAM for 3D model generation and 14GB of RAM
+- CUDA-enabled GPU with at least 8GB VRAM for texturing model generation and 32GB of RAM
 
 ## 📝 Tips
 *** NOT TESTED ***
